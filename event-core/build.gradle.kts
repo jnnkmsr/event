@@ -23,7 +23,7 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 
-    withJavadocJar()
+//    withJavadocJar()
     withSourcesJar()
 }
 
@@ -48,11 +48,11 @@ afterEvaluate {
     }
 }
 
-tasks.javadoc {
-    if (JavaVersion.current().isJava9Compatible) {
-        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
-    }
-}
+//tasks.javadoc {
+//    if (JavaVersion.current().isJava9Compatible) {
+//        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+//    }
+//}
 
 dependencies {
 }
