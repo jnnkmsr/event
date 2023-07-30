@@ -35,14 +35,14 @@ afterEvaluate {
 
                 from(components["java"])
 
-                versionMapping {
-                    usage("java-api") {
-                        fromResolutionOf("runtimeClasspath")
-                    }
-                    usage("java-runtime") {
-                        fromResolutionResult()
-                    }
-                }
+//                versionMapping {
+//                    usage("java-api") {
+//                        fromResolutionOf("runtimeClasspath")
+//                    }
+//                    usage("java-runtime") {
+//                        fromResolutionResult()
+//                    }
+//                }
             }
         }
     }

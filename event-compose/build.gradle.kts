@@ -22,7 +22,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.jnnkmsr.kotlin.event.compose"
+    namespace = "com.github.jnnkmsr.event.compose"
     compileSdk = 34
 
     defaultConfig {
@@ -46,7 +46,7 @@ android {
     publishing {
         singleVariant("release") {
             withSourcesJar()
-            withJavadocJar()
+//            withJavadocJar()
         }
     }
 
