@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2023 Jannik Möser
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Sample.Splash"
+        tools:targetApi="34">
+
+        <!--
+          Make the application profileable, as required for both the Android
+          Studio profiler and benchmarking.
+          http://d.android.com/studio/profile#profileable-apps
+          -->
+        <profileable android:shell="true" />
+
+        <!--
+          android:windowSoftInputMode needs to be set to "adjustResize" to
+          support animated IME/keyboard insets.
+          http://google.github.io/accompanist/insets/#migration
+          -->
+        <activity
+            android:name="com.github.jnnkmsr.util.sample.SampleActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

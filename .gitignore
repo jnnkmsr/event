@@ -1,0 +1,72 @@
+# Private project information
+google-services.json
+
+### Built application files ###
+*.apk
+*.aar
+*.ap_
+*.aab
+
+### IntelliJ/Android Studio ###
+
+# Generated files
+bin/
+gen/
+out/
+
+# Project configuration
+.idea/
+.idea/codeStyles
+.idea/dictionaries
+.idea/inspectionProfiles
+.idea/shelf
+.idea/tasks.xml
+.idea/workspace.xml
+
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/dbnavigator.xml
+.idea/**/dynamic.xml
+.idea/**/sqlDataSources.xml
+.idea/**/uiDesigner.xml
+
+# Gradle
+*.iml
+*.ipr
+.idea/*.iml
+.idea/artifacts
+.idea/caches
+.idea/libraries
+.idea/modules
+.idea/compiler.xml
+.idea/gradle.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
+.idea/modules.xml
+/captures
+
+# Version control
+vcs.xml
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# External native build folder generated in Android Studio 2.2+
+.externalNativeBuild
+.cxx
+
+### Gradle files ###
+.gradle/
+build/
+local.properties
+/local.properties
+
+### System-dependent ###
+
+# Mac OS
+.DS_Store
+
+# Windows
+desktop.ini
