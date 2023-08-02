@@ -25,9 +25,29 @@ public fun <T> Event<T>.toUiEvent(): UiEvent<T> =
         is Event.Consumed -> UiEvent.Consumed(emitter, receiver)
     }
 
-/** Maps `this` [UiEvent] to a matching [Event]. */
+/**
+ * Maps `this` [Event] to a matching [UiEvent], applying the given [transform]
+ * to the [data][Event.Triggered.data].
+ */
+public inline fun <T, R> Event<T>.toUiEvent(transform: (data: T) -> R): UiEvent<R> =
+    when (this) {
+        is Event.Triggered -> UiEvent.Triggered(transform(data), emitter, receiver)
+        is Event.Consumed -> UiEvent.Consumed(emitter, receiver)
+    }
+
+/**  Maps `this` [UiEvent] to a matching [Event]. */
 public fun <T> UiEvent<T>.toEvent(): Event<T> =
     when (this) {
         is UiEvent.Triggered -> Event.Triggered(data, emitter, receiver)
+        is UiEvent.Consumed -> Event.Consumed(emitter, receiver)
+    }
+
+/**
+ * Maps `this` [UiEvent] to a matching [Event], applying the given [transform]
+`* to the [data][Event.Triggered.data].
+ */
+public inline fun <T, R> UiEvent<T>.toEvent(transform: (data: T) -> R): Event<R> =
+    when (this) {
+        is UiEvent.Triggered -> Event.Triggered(transform(data), emitter, receiver)
         is UiEvent.Consumed -> Event.Consumed(emitter, receiver)
     }
