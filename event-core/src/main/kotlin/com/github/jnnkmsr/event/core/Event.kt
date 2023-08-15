@@ -16,12 +16,15 @@
 
 package com.github.jnnkmsr.event.core
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Represents a one-time event that can be either [Triggered] or [Consumed].
  *
  * A [Triggered] event holds [data][Triggered.data] to be used when consuming
  * the event.
  */
+@Immutable
 public sealed interface Event<out T> {
 
     /** A unique key identifying the emitter of the [Event]. */

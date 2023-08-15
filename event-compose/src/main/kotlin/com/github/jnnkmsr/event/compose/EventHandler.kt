@@ -23,87 +23,115 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
+import com.github.jnnkmsr.event.core.Event
+import com.github.jnnkmsr.event.core.consumed
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 /**
  * [Launches][LaunchedEffect] a side effect that execute the given event
- * [handler] when the [event] becomes [Triggered][UiEvent.Triggered].
+ * [handler] when the [event] becomes [Triggered][Event.Triggered].
  *
- * @param event The [UiEvent] triggering the effect whenever it becomes
- *   non-`null` and [Triggered][UiEvent.Triggered].
- * @param onConsumed Callback to be used to pass back any
- *   [Consumed][UiEvent.Consumed] event from the effect. Depending on the value
- *   of [consumeFirst], the callback will be invoked before or after invoking
- *   the event [handler].
- * @param consumeFirst Flag indicating whether [onConsumed] should be called
- *   with the [Consumed][UiEvent.Consumed] event before (`true`) or after
- *   (`false`) invoking the suspending event [handler]. Set this to `true` to
- *   make sure the event will be consumed no matter if the [handler] ever
- *   returns.
- * @param handler The event handler receiving the [data][UiEvent.Triggered.data]
- *   of the [Triggered][UiEvent.Triggered] event.
+ * @param event The [Event] triggering the effect whenever it becomes non-`null`
+ * and [Triggered][Event.Triggered].
+ *
+ * @param onConsumed Callback to pass back any [Consumed][Event.Consumed] event
+ * from the effect. Depending on the value of [consumeImmediately], the callback
+ * will be invoked before or after invoking the event [handler].
+ *
+ * @param consumeImmediately Flag indicating whether [onConsumed] should be
+ * called with the [Consumed][Event.Consumed] event before (`true`) or after
+ * (`false`) invoking the suspending event [handler]. Set this to `true` to make
+ * sure the event will be consumed no matter if the [handler] ever returns.
+ *
+ * @param whileConsumed Optional callback that is [launched][LaunchedEffect]
+ * while the given [event] is `null` or [Consumed][Event.Consumed].
+ *
+ * @param handler The event handler receiving the [data][Event.Triggered.data]
+ * of the [Triggered][Event.Triggered] event.
  */
 @Composable
 @NonRestartableComposable
 public fun <T> EventHandler(
-    event: UiEvent<T>?,
-    onConsumed: (consumed: UiEvent.Consumed) -> Unit,
-    consumeFirst: Boolean = false,
+    event: Event<T>?,
+    onConsumed: (consumed: Event.Consumed) -> Unit,
+    consumeImmediately: Boolean = false,
+    whileConsumed: (suspend () -> Unit)? = null,
     handler: suspend (content: T) -> Unit,
 ) {
     EventHandler(
         Unit,
         event = event,
         onConsumed = onConsumed,
-        consumeImmediately = consumeFirst,
+        consumeImmediately = consumeImmediately,
+        whileConsumed = whileConsumed,
         handler = handler
     )
 }
 
 /**
  * [Launches][LaunchedEffect] a side effect that execute the given event
- * [handler] when the [event] becomes [Triggered][UiEvent.Triggered].
+ * [handler] when the [event] becomes [Triggered][Event.Triggered].
  *
  * @param keys Optional keys that will trigger the effect to be cancelled and
- *   re-launched when the [EventHandler] is recomposed with any different keys.
- * @param event The [UiEvent] triggering the effect whenever it becomes
- *   non-`null` and [Triggered][UiEvent.Triggered].
- * @param onConsumed Callback to be used to pass back any
- *   [Consumed][UiEvent.Consumed] event from the effect. Depending on the value
- *   of [consumeImmediately], the callback will be invoked before or after invoking
- *   the event [handler].
- * @param consumeImmediately Flag indicating whether [onConsumed] should be called
- *   with the [Consumed][UiEvent.Consumed] event before (`true`) or after
- *   (`false`) invoking the suspending event [handler]. Set this to `true` to
- *   make sure the event will be consumed no matter if the [handler] ever
- *   returns.
- * @param handler The event handler receiving the [data][UiEvent.Triggered.data]
- *   of the [Triggered][UiEvent.Triggered] event.
+ * re-launched when the [EventHandler] is recomposed with any different keys.
+ *
+ * @param event The [Event] triggering the effect whenever it becomes non-`null`
+ * and [Triggered][Event.Triggered].
+ *
+ * @param onConsumed Callback to pass back any [Consumed][Event.Consumed] event
+ * from the effect. Depending on the value of [consumeImmediately], the callback
+ * will be invoked before or after invoking the event [handler].
+ *
+ * @param consumeImmediately Flag indicating whether [onConsumed] should be
+ * called with the [Consumed][Event.Consumed] event before (`true`) or after
+ * (`false`) invoking the suspending event [handler]. Set this to `true` to make
+ * sure the event will be consumed no matter if the [handler] ever returns.
+ *
+ * @param whileConsumed Optional callback that is [launched][LaunchedEffect]
+ * while the given [event] is `null` or [Consumed][Event.Consumed].
+ *
+ * @param handler The event handler receiving the [data][Event.Triggered.data]
+ * of the [Triggered][Event.Triggered] event.
  */
 @Composable
 @NonRestartableComposable
 public fun <T> EventHandler(
     vararg keys: Any?,
-    event: UiEvent<T>?,
-    onConsumed: (consumed: UiEvent.Consumed) -> Unit,
+    event: Event<T>?,
+    onConsumed: (consumed: Event.Consumed) -> Unit,
     consumeImmediately: Boolean = false,
+    whileConsumed: (suspend () -> Unit)? = null,
     handler: suspend (content: T) -> Unit,
 ) {
     val latestEvent by rememberUpdatedState(event)
+    val latestHandler by rememberUpdatedState(handler)
+    val latestOnConsumed by rememberUpdatedState(onConsumed)
+
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(*keys) {
         snapshotFlow { latestEvent }
             .filterNotNull()
-            .filterIsInstance<UiEvent.Triggered<T>>()
+            .filterIsInstance<Event.Triggered<T>>()
             .collect { event ->
-                if (consumeImmediately) onConsumed(event.consumed())
+                if (consumeImmediately) latestOnConsumed(event.consumed())
                 coroutineScope.launch {
-                    handler(event.data)
-                    if (!consumeImmediately) onConsumed(event.consumed())
+                    latestHandler(event.data)
+                    if (!consumeImmediately) latestOnConsumed(event.consumed())
                 }
             }
+    }
+
+    if (whileConsumed != null) {
+        val latestWhileConsumed by rememberUpdatedState(whileConsumed)
+        LaunchedEffect(*keys) {
+            snapshotFlow { latestEvent == null || latestEvent is Event.Consumed }
+                .collectLatest { isConsumed ->
+                    if (isConsumed) latestWhileConsumed()
+                }
+        }
     }
 }

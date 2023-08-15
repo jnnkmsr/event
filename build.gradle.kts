@@ -24,5 +24,5 @@ plugins {
 
 subprojects {
     group = "com.github.jnnkmsr.event"
-    version = "0.1.3-alpha"
+    version = "0.2.0-alpha"
 }
