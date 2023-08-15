@@ -23,7 +23,6 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 
-//    withJavadocJar()
     withSourcesJar()
 }
 
@@ -34,25 +33,11 @@ afterEvaluate {
                 artifactId = "event-core"
 
                 from(components["java"])
-
-//                versionMapping {
-//                    usage("java-api") {
-//                        fromResolutionOf("runtimeClasspath")
-//                    }
-//                    usage("java-runtime") {
-//                        fromResolutionResult()
-//                    }
-//                }
             }
         }
     }
 }
 
-//tasks.javadoc {
-//    if (JavaVersion.current().isJava9Compatible) {
-//        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
-//    }
-//}
-
 dependencies {
+    api(libs.compose.multiplatform)
 }

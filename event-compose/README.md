@@ -3,8 +3,8 @@
 
 # One-Time Events for Jetpack Compose
 
-Provides a `UiEvent` version tailored for [Jetpack Compose][compose] and an
-`EventHandler` for consuming events in composables.
+Provides an `EventHandler` effect for [Jetpack Compose][compose] to consume
+events in composables.
 
 ## Download
 
